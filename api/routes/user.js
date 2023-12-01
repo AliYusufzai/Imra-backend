@@ -53,7 +53,7 @@ router.post(
   createUser
 );
 
-
+router.post("/sign-in", userSignIn);
 router.post("/sign-out", isAuth, signOut);
 
 router.post("/reset-password", changePassword);
