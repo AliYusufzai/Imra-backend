@@ -16,6 +16,7 @@ const medicalallergy = require("./routes/medical_allergy_routes");
 const myroutien = require("./routes/myroutine_routes");
 const question = require("./routes/question_routes");
 const term = require("./routes/term_contition_routes");
+const faqs = require("./routes/faq_routes");
 const cors = require("cors"); 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use(medicalallergy);
 app.use(myroutien);
 app.use(question);
 app.use(term);
+app.use(faqs);
 app.use(dishboard)
 const PORT = 8000;
 app.get("/", (req, res) => {
