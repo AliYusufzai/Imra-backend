@@ -56,27 +56,57 @@ exports.createDocument = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+// Get All Documents
+exports.getAllDocuments = async (req, res) => {
+  try {
+    const documents = await Document.find();
+    res.status(200).json({ documents });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
-// exports.createDocument = async (req, res) => {
+// Get Documents by User ID
+exports.getUserDocuments = async (req, res) => {
+  try {
+    const { userId } = req.params;
 
-//     const { doc_name, description, document,} = req.body;
-//     if (!req.file) {
-//       return res.status(400).json({ error: "No image file provided" });
-//   }
-//     const result = await cloudinary.uploader.upload(req.file.path,{
-//         resource_type: 'auto', 
-//     });
-//     console.log(result)
-   
-//     const doc = await Document({
-//         doc_name,
-//         description, 
-//         document: result.secure_url
-//     });
-//     await doc.save();
-//     res.json({
-//         success: true,
-//         doc,
-//     });
-//   };
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const documents = await Document.find({ user: user._id });
+
+    res.status(200).json({ documents });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Delete Document by ID
+exports.deleteDocument = async (req, res) => {
+  try {
+    const { docId } = req.params;
+
+    const document = await Document.findById(docId);
+
+    if (!document) {
+      return res.status(404).json({ error: "Document not found" });
+    }
+
+    // Optionally, you may want to check permissions here (e.g., if the user owns the document)
+
+    // Delete the document
+    await document.remove();
+
+    res.status(200).json({ message: "Document deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 

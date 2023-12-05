@@ -51,6 +51,35 @@ exports.createAdmin = async (req, res) => {
   });
 };
 
+//get all admin
+
+exports.getAllAdmins = async (req, res) => {
+  try {
+    const admins = await Admin.find({}, "-password -tokens");
+    res.status(200).json({ admins });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Get Single Admin by ID
+exports.getSingleAdmin = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+
+    const admin = await Admin.findById(adminId, "-password -tokens");
+
+    if (!admin) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+
+    res.status(200).json({ admin });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 //for hospital admin
 exports.createHospitalAdmin = async (req, res) => {
   const { fullname, email, phonenumber, password, type } = req.body;
@@ -168,5 +197,36 @@ exports.toggleActiveStatus = async (req, res) => {
       message: "An error occured ",
       error: error.message
     });
+  }
+};
+
+exports.updateAdmin = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    const updatedData = req.body;
+
+    // Process file upload if available
+    if (req.file) {
+      console.log("File received:", req.file);
+      const result = await cloudinary.uploader.upload(req.file.path);
+      updatedData.avatar = result.secure_url;
+    } else {
+      console.log("No file received");
+    }
+
+    const updatedAdmin = await Admin.findByIdAndUpdate(
+      adminId,
+      updatedData,
+      { new: true }
+    );
+
+    if (!updatedAdmin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    return res.status(200).json({ message: "Admin updated successfully", updatedAdmin });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error", details: error.message });
   }
 };

@@ -34,6 +34,68 @@ exports.createDoctor = async (req, res) => {
     });
   };
 
+
+  // Get Single Doctor by ID
+exports.getDoctorById = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+
+    const doctor = await Doctor.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    return res.status(200).json({ doctor });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error", details: error.message });
+  }
+};
+
+// Get All Doctors
+exports.getAllDoctors = async (req, res) => {
+  try {
+    const doctors = await Doctor.find();
+    res.status(200).json({ doctors });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error", details: error.message });
+  }
+};
+
+// Update Doctor
+exports.updateDoctor = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+    const updatedData = req.body;
+
+    // Process file upload if available
+    if (req.file) {
+      console.log("File received:", req.file);
+      const result = await cloudinary.uploader.upload(req.file.path);
+      updatedData.Image = result.secure_url;
+    } else {
+      console.log("No file received");
+    }
+
+    const updatedDoctor = await Doctor.findByIdAndUpdate(
+      doctorId,
+      updatedData,
+      { new: true }
+    );
+
+    if (!updatedDoctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    return res.status(200).json({ message: "Doctor updated successfully", updatedDoctor });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error", details: error.message });
+  }
+};
+
     // Delete Doctor
 exports.deleteDoctor = async (req, res) => {
   try {
