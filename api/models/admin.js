@@ -68,6 +68,22 @@ const adminSchema= new mongoose.Schema({
       default: 0,   // Default value (0 for false)
       enum: [0, 1],
     },
+   add_doctor:{
+      type: Number, // Representing as a number
+      default: 0,   // Default value (0 for false)
+      enum: [0, 1],
+    },
+    manage_doctor:{
+      type: Number, // Representing as a number
+      default: 0,   // Default value (0 for false)
+      enum: [0, 1],
+    },
+    
+    dashboard:{
+      type: Number, // Representing as a number
+      default: 0,   // Default value (0 for false)
+      enum: [0, 1],
+    },
     is_active: {
       type: Boolean,
       default: true, // Default value is true, indicating the admin is active
