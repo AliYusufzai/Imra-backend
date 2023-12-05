@@ -9,12 +9,13 @@ cloudinary.config({
     api_key: "345126432123499",
     api_secret: "cqCvcU_hqshoESszVszEnB5-D_8",
 });
-const { createDoctor } = require("../controllers/doctor_controller");
+const { createDoctor,deleteDoctor } = require("../controllers/doctor_controller");
 
 const upload = multer({ storage });
 
 router.post("/create-doctor", upload.single("Image"), createDoctor);
 
+router.delete("/delete-doctor/:doctorId", deleteDoctor) 
 //Doctor  Get all doctor
 router.get("/all-doctor", async (req, res) => {
     try {
@@ -47,29 +48,29 @@ router.get("/single-doctor/:doctorId", async (req, res) => {
     }
 });
 // Doctor Delete doctor api
-router.delete("/delete-doctor/:doctorId", async (req, res) => {
-    try {
-        const { doctorId } = req.params;
+// router.delete("/delete-doctor/:doctorId", async (req, res) => {
+//     try {
+//         const { doctorId } = req.params;
 
-        // Find the doctor by ID and delete it
-        const deletedDoctor = await Doctor.findByIdAndRemove(doctorId);
+//         // Find the doctor by ID and delete it
+//         const deletedDoctor = await Doctor.findByIdAndRemove(doctorId);
 
-        if (!deletedDoctor) {
-            return res
-                .status(404)
-                .json({ success: false, message: "Doctor not found" });
-        }
+//         if (!deletedDoctor) {
+//             return res
+//                 .status(404)
+//                 .json({ success: false, message: "Doctor not found" });
+//         }
 
-        res.json({
-            success: true,
-            message: "Doctor deleted successfully",
-            data: deletedDoctor,
-        });
-    } catch (error) {
-        console.error("Error deleting doctor:", error);
-        res.status(500).json({ success: false, message: "An error occurred." });
-    }
-});
+//         res.json({
+//             success: true,
+//             message: "Doctor deleted successfully",
+//             data: deletedDoctor,
+//         });
+//     } catch (error) {
+//         console.error("Error deleting doctor:", error);
+//         res.status(500).json({ success: false, message: "An error occurred." });
+//     }
+// });
 
 // Doctor update  api
 router.patch(

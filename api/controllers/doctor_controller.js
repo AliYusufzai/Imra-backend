@@ -33,3 +33,21 @@ exports.createDoctor = async (req, res) => {
       doctor
     });
   };
+
+    // Delete Doctor
+exports.deleteDoctor = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+
+    const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
+
+    if (!deletedDoctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    return res.status(200).json({ message: "Doctor deleted successfully", deletedDoctor });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error", details: error.message });
+  }
+};
