@@ -23,33 +23,69 @@ exports.createAdmin = async (req, res) => {
     return res.status(400).json({ error: "No image file provided" });
   }
   const result = await cloudinary.uploader.upload(req.file.path);
+  const existingAdmin = await Admin.findOne({ email });
 
-  const admin = await Admin({
-    fullname,
-    email,
-    phonenumber,
-    password,
-    type,
-    title,
-    addHospital,
-    manageHospital,
-    addAdmin,
-    services,
-    reception,
-    manageUser,
-    manageAdmin,
-    add_doctor,
-    manage_doctor ,
-    dashboard,
-    is_active,
-    avatar: result.secure_url
+if (existingAdmin) {
+  return res.status(400).json({
+    success: false,
+    message: "Email already exists. Please use a different email."
   });
-  await admin.save();
-  res.json({
-    success: true,
-    admin
-  });
-};
+}
+
+const admin = await Admin({
+  fullname,
+  email,
+  phonenumber,
+  password,
+  type,
+  title,
+  addHospital,
+  manageHospital,
+  addAdmin,
+  services,
+  reception,
+  manageUser,
+  manageAdmin,
+  add_doctor,
+  manage_doctor,
+  dashboard,
+  is_active,
+  avatar: result.secure_url
+});
+
+await admin.save();
+res.json({
+  success: true,
+  admin
+});
+}
+
+//   const admin = await Admin({
+//     fullname,
+//     email,
+//     phonenumber,
+//     password,
+//     type,
+//     title,
+//     addHospital,
+//     manageHospital,
+//     addAdmin,
+//     services,
+//     reception,
+//     manageUser,
+//     manageAdmin,
+//     add_doctor,
+//     manage_doctor ,
+//     dashboard,
+//     is_active,
+//     avatar: result.secure_url
+//   });
+//   await admin.save();
+//   res.json({
+//     success: true,
+//     admin
+//   });
+// };
 
 //get all admin
 

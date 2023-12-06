@@ -225,16 +225,155 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-//const storage = multer.memoryStorage(); // Store files in memory as buffer
-// const fileFilter = (req, file, cb) => {
-//     if (file.mimetype === 'application/pdf' || file.mimetype === 'image/png') {
-//         cb(null, true); // Accept the file
-//     } else {
-//         cb(new Error('Only PDF or PNG files are allowed.'), false); // Reject the file
-//     }
-// };
+exports. updateUser = async (req, res) => {
+  const userId = req.params.userId;
 
-// const upload = multer({
-//     storage,
-//     fileFilter,
-// });
+  try {
+    const { date_of_birth, country, address } = req.body;
+
+    // Check if an image file is provided
+    if (req.file) {
+      return res.status(400).json({ error: "No image file provided" });
+    }
+
+    // Upload the image to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path);
+
+    // Update the user's profile in the database using User.findByIdAndUpdate
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        date_of_birth: date_of_birth,
+        address: address,
+        country: country,
+        avatar: result.secure_url,
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ message: "User profile updated successfully", updatedUser });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error", details: error.message });
+  }
+};
+
+//get single user
+exports.singleUser = async (req, res) => {
+  try {
+    const userId = req.params.userId; // Get the admin ID from the URL parameter
+    const data = await User.findById(userId, "-password -tokens"); // Find the admin by ID
+
+    if (!data) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Error fetching single user:", error);
+    res.status(500).json({ success: false, message: "An error occurred." });
+  }
+};
+
+//alluser
+exports.allUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, "-password -tokens"); // Find all users, excluding password and tokens
+
+    res.json({ success: true, data: users });
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    res.status(500).json({ success: false, message: "An error occurred." });
+  }
+}
+
+//delete user
+exports.deleteUser = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found."
+      });
+    }
+    res.json({
+      success: true,
+      message: "User deleted successfully."
+    });
+  } catch (error) {
+    console.error("Error deleting User:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while deleting the User."
+    });
+  }
+};
+
+exports.createProfile = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const { date_of_birth, country, address } = req.body;
+
+    // Upload the image to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path);
+
+    // Update the user's profile in the database using User.findByIdAndUpdate
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        date_of_birth: date_of_birth,
+        address: address,
+        country: country,
+        avatar: result.secure_url,
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ message: "User profile created successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.userUpdate = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const updatedData = req.body;
+    
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      updatedData.avatar = result.secure_url;
+    } else {
+      console.log("No file received");
+    }
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updatedData },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ message: "Updated successfully", updatedData });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error", details: error.message });
+  }
+};

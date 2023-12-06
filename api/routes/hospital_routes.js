@@ -11,7 +11,6 @@ const { createHospital, getAllHospitals,getSingleHospital,updateHospital,deleteH
 router.post("/create-hospital",
   upload.single("avatar"),
 createHospital);
-
 //get api all hospital.
 router.get("/all-hospitals",getAllHospitals)
   

@@ -9,20 +9,7 @@ const { createDocument ,getUserDocuments,getAllDocuments,deleteDocument} = requi
 
 router.post("/create-document", upload.single("document"), createDocument);
 //get all document api
-router.get("/all-doc",getAllDocuments)
-
-// async (req, res) => {
-//     try {
-//       const data = await Document.find({});
-  
-//       res.json({ success: true, data });
-//     } catch (error) {
-//       console.error("Error fetching Document:", error);
-//       res.status(500).json({ success: false, message: "An error occurred." });
-//     }
-//   });
-
-
+router.get("/all-doc",getAllDocuments),
   //get  single user all doc
 router.get("/user_all_doc/:userId",getUserDocuments)
 router.delete("/delete-all/:docId", deleteDocument) 
