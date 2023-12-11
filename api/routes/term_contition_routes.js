@@ -6,8 +6,6 @@ const {
     updateTermConditionById,
     deleteTermConditionById 
   }= require('../controllers/term_condition_controller')
-
-
 router.post("/post-term-condition",  createTermCondition),
 router.get("/get-term-condition",  getAllTermConditions),
 router.patch("/update-term-condition/:id",  updateTermConditionById),

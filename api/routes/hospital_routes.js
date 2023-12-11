@@ -23,7 +23,7 @@ router.patch('/update-hospital/:hospitalId', upload.single('avatar'),updateHospi
 
   
   ///Delete api hospital
-router.delete("/delete-hospital/:id", deleteHospital)
+router.delete("/delete-hospital/:hospitalId", deleteHospital)
 
 
   module.exports = router;
