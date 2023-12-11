@@ -75,19 +75,38 @@ router.post('/api/food-allergies', async (req, res) => {
     }
   });
   // search api for food allergy
-  router.get('/api/food-allergies', async (req, res) => {
+  // router.get('/api/food-allergies', async (req, res) => {
+  //   try {
+  //     const searchText = req.query.searchText;
+  
+  //     let query = {};
+  //     if (searchText) {
+  //       // If searchText is provided, create a case-insensitive regular expression for searching
+  //       const searchRegex = new RegExp(searchText, 'i');
+  //       query = { name: searchRegex };
+  //     }
+  
+  //     // Fetch food allergies from the database based on the query
+  //     const foodAllergies = await FoodAllergy.find(query);
+  
+  //     res.json({ foodAllergies });
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ message: 'Internal Server Error' });
+  //   }
+  // });
+
+
+  router.get('/search/food-allergies', async (req, res) => {
     try {
-      const searchText = req.query.searchText;
+      // Extract the search text from the query parameters
+      const searchText = req.query.searchText || '';
   
-      let query = {};
-      if (searchText) {
-        // If searchText is provided, create a case-insensitive regular expression for searching
-        const searchRegex = new RegExp(searchText, 'i');
-        query = { name: searchRegex };
-      }
+      // Create a regular expression to perform a case-insensitive partial match
+      const searchRegex = new RegExp(searchText, 'i');
   
-      // Fetch food allergies from the database based on the query
-      const foodAllergies = await FoodAllergy.find(query);
+      // Use the search text to filter food allergies from the database
+      const foodAllergies = await FoodAllergy.find({ name: searchRegex });
   
       res.json({ foodAllergies });
     } catch (error) {
