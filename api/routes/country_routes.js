@@ -73,4 +73,25 @@ router.patch('/updatecountry/:id', upload.single('countryImage'), async (req, re
       return res.status(500).json({ error: 'Internal server error', details: error.message });
     }
   });
+
+
+  // search api
+
+  router.get('/search/country', async (req, res) => {
+    try {
+      // Extract the search text from the query parameters
+      const searchText = req.query.searchText || '';
+  
+      // Create a regular expression to perform a case-insensitive partial match
+      const searchRegex = new RegExp(searchText, 'i');
+  
+      // Use the search text to filter food allergies from the database
+      const countrysearch = await Country.find({ name: searchRegex });
+  
+      res.json({ countrysearch });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
   module.exports = router;

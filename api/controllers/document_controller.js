@@ -110,3 +110,8 @@ exports.deleteDocument = async (req, res) => {
   }
 };
 
+//search documents
+
+exports.searchQcument= async(req,res)=>{
+  
+}

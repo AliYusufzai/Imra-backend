@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
+const bcrypt = require('bcrypt');
 // const {cloudinary} = require('../middlewares/clouddary')
 
 const JWT_SECRET = "VERYsecret123";
@@ -163,56 +164,126 @@ exports.createReception = async (req, res) => {
 };
 
 //for login
+// exports.adminSignIn = async (req, res) => {
+//   const { email, password } = req.body;
+
+//   const admin = await Admin.findOne({ email });
+
+//   if (!admin)
+//     return res.json({
+//       success: false,
+//       message: "admin not found, with the given email!"
+//     });
+
+//   const superAdmin = admin.type === 1;
+//   const hospitalAdmin = admin.type === 2;
+//   const reception = admin.type === 3;
+//   const token = jwt.sign({ adminId: admin._id }, JWT_SECRET, {
+//     expiresIn: "1d"
+//   });
+
+//   let oldTokens = admin.tokens || [];
+
+//   if (oldTokens.length) {
+//     oldTokens = oldTokens.filter((t) => {
+//       const timeDiff = (Date.now() - parseInt(t.signedAt)) / 1000;
+//       if (timeDiff < 86400) {
+//         return t;
+//       }
+//     });
+//   }
+
+//   await Admin.findByIdAndUpdate(admin._id, {
+//     tokens: [...oldTokens, { token, signedAt: Date.now().toString() }]
+//   });
+
+//   const adminInfo = {
+//     id: admin._id,
+//     fullname: admin.fullname,
+//     email: admin.email,
+//     phonenumber: admin.phonenumber,
+//     superAdmin,
+//     hospitalAdmin,
+//     reception,
+//     avatar: admin.avatar ? admin.avatar : ""
+//   };
+
+//   res.json({
+//     success: 1,
+//     message: "login successfully",
+//     data: adminInfo,
+//     token
+//   });
+// };
 exports.adminSignIn = async (req, res) => {
   const { email, password } = req.body;
 
-  const admin = await Admin.findOne({ email });
+  try {
+    const admin = await Admin.findOne({ email });
 
-  if (!admin)
-    return res.json({
-      success: false,
-      message: "admin not found, with the given email!"
+    if (!admin) {
+      return res.json({
+        success: false,
+        message: "Admin not found with the given email!"
+      });
+    }
+
+    // Check if the provided password matches the stored password
+    const isPasswordValid = await admin.comparepassword(password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid password. Please try again.',
+      });
+    }
+
+    const superAdmin = admin.type === 1;
+    const hospitalAdmin = admin.type === 2;
+    const reception = admin.type === 3;
+    const token = jwt.sign({ adminId: admin._id }, JWT_SECRET, {
+      expiresIn: "1d"
     });
 
-  const superAdmin = admin.type === 1;
-  const hospitalAdmin = admin.type === 2;
-  const reception = admin.type === 3;
-  const token = jwt.sign({ adminId: admin._id }, JWT_SECRET, {
-    expiresIn: "1d"
-  });
+    let oldTokens = admin.tokens || [];
 
-  let oldTokens = admin.tokens || [];
+    if (oldTokens.length) {
+      oldTokens = oldTokens.filter((t) => {
+        const timeDiff = (Date.now() - parseInt(t.signedAt)) / 1000;
+        if (timeDiff < 86400) {
+          return t;
+        }
+      });
+    }
 
-  if (oldTokens.length) {
-    oldTokens = oldTokens.filter((t) => {
-      const timeDiff = (Date.now() - parseInt(t.signedAt)) / 1000;
-      if (timeDiff < 86400) {
-        return t;
-      }
+    await Admin.findByIdAndUpdate(admin._id, {
+      tokens: [...oldTokens, { token, signedAt: Date.now().toString() }]
+    });
+
+    const adminInfo = {
+      id: admin._id,
+      fullname: admin.fullname,
+      email: admin.email,
+      phonenumber: admin.phonenumber,
+      superAdmin,
+      hospitalAdmin,
+      reception,
+      avatar: admin.avatar ? admin.avatar : ""
+    };
+
+    res.json({
+      success: 1,
+      message: "Login successful",
+      data: adminInfo,
+      token
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
     });
   }
-
-  await Admin.findByIdAndUpdate(admin._id, {
-    tokens: [...oldTokens, { token, signedAt: Date.now().toString() }]
-  });
-
-  const adminInfo = {
-    id: admin._id,
-    fullname: admin.fullname,
-    email: admin.email,
-    phonenumber: admin.phonenumber,
-    superAdmin,
-    hospitalAdmin,
-    reception,
-    avatar: admin.avatar ? admin.avatar : ""
-  };
-
-  res.json({
-    success: 1,
-    message: "login successfully",
-    data: adminInfo,
-    token
-  });
 };
 //const Admin = require('../models/Admin');
 

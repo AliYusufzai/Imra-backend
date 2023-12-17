@@ -17,6 +17,8 @@ const myroutien = require("./routes/myroutine_routes");
 const question = require("./routes/question_routes");
 const term = require("./routes/term_contition_routes");
 const faqs = require("./routes/faq_routes");
+const reception = require("./routes/reception_routes");
+const hospitalDishboard=require("./routes/dishboard_for_hospital_routes")
 const cors = require("cors"); 
 const app = express();
 
@@ -38,6 +40,7 @@ app.use(function (req, res, next) {
 
 app.use(express.json());
 app.use(useRouter);
+app.use(hospitalDishboard)
 app.use(privacyRouter);
 app.use(medicalhistory);
 app.use(doctor);
@@ -52,7 +55,8 @@ app.use(myroutien);
 app.use(question);
 app.use(term);
 app.use(faqs);
-app.use(dishboard)
+app.use(dishboard);
+app.use(reception);
 const PORT = 8000;
 app.get("/", (req, res) => {
   res.send("<h1>Hello world<h1>");
