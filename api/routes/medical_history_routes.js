@@ -57,5 +57,42 @@ router.get("/medical-history/:userId", async (req, res) => {
     }
   });
 
+  router.patch("/update-medical-history/:userId", async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const updatedData = req.body; // Assuming the updated data is sent in the request body
+
+        // Update the medical history record by its ID
+        const updatedRecord = await MedicalHistory.findOneAndUpdate({ user: userId }, updatedData, { new: true });
+
+        if (!updatedRecord) {
+            return res.status(404).json({ error: "Medical history record not found" });
+        }
+
+        res.status(200).json({ success: 1, data: updatedRecord ,message: "Medical history record update successfully"});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// Delete a medical history record by ID
+router.delete("/delete-medical-history/:userId", async (req, res) => {
+  try {
+      const userId = req.params.userId;
+
+      // Delete the medical history record by its ID
+      const deletedRecord = await MedicalHistory.findOneAndDelete({ user: userId });
+
+      if (!deletedRecord) {
+          return res.status(404).json({ error: "Medical history record not found" });
+      }
+
+      res.status(200).json({ success: 1, data: deletedRecord, message: "Medical history record deleted successfully" });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" ,});
+  }
+});
 
   module.exports = router;

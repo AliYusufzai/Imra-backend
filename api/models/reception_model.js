@@ -27,7 +27,6 @@ const receptionSchema= new mongoose.Schema({
        //required: true,
      },
      
-
      tokens: [{ type: Object }],
     
     

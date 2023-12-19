@@ -6,11 +6,15 @@ const storage = multer.diskStorage({});
 
 const upload = multer({ storage });
 
-const { createHospital, getAllHospitals,getSingleHospital,updateHospital,deleteHospital } = require("../controllers/hospital");
+const { createHosp,
+  loginhosptial,
+  //createHospital,
+   getAllHospitals,getSingleHospital,updateHospital,deleteHospital } = require("../controllers/hospital");
 
 router.post("/create-hospital",
   upload.single("avatar"),
-createHospital);
+  createHosp);
+  router.post("/login-hospital",loginhosptial),
 //get api all hospital.
 router.get("/all-hospitals",getAllHospitals)
   

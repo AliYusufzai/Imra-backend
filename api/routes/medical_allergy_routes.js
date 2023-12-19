@@ -2,6 +2,7 @@
 
 const express = require("express");
 const router = express.Router();
+
 const medicalAllergyController = require('../controllers/medical_allergy_controller');
 router.post('/medical-allergies', medicalAllergyController.createMedicalAllergy);
 

@@ -3,9 +3,7 @@ const router = express.Router();
 const Admin = require("../models/admin");
 const multer = require("multer");
 const storage = multer.diskStorage({});
-
 const upload = multer({ storage });
-
 const {
     createAdmin,
     adminSignIn,

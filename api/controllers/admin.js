@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Admin = require("../models/admin");
+const SuperAdmin = require("../models/super_admin_model");
 const bcrypt = require('bcrypt');
 // const {cloudinary} = require('../middlewares/clouddary')
 
@@ -17,14 +17,14 @@ cloudinary.config({
 exports.createAdmin = async (req, res) => {
   const { fullname, email, phonenumber, password, type, title ,
     addHospital,manageHospital,addAdmin,manageAdmin,services,is_active,reception,manageUser,add_doctor,
-    manage_doctor ,
+    manage_doctor ,avatar,
     dashboard,} = req.body;
 
   if (!req.file) {
     return res.status(400).json({ error: "No image file provided" });
   }
   const result = await cloudinary.uploader.upload(req.file.path);
-  const existingAdmin = await Admin.findOne({ email });
+  const existingAdmin = await SuperAdmin.findOne({ email });
 
 if (existingAdmin) {
   return res.status(400).json({
@@ -32,8 +32,7 @@ if (existingAdmin) {
     message: "Email already exists. Please use a different email."
   });
 }
-
-const admin = await Admin({
+const admin = await SuperAdmin({
   fullname,
   email,
   phonenumber,

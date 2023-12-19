@@ -3,10 +3,19 @@ const mongoose = require("mongoose");
 const MedicalHistorySchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     procedure: {type: String},
+    patientNo:{type:String},
+    patientName:{type:String},
+    dieases:{type:String},
+    test:{type:String},
+    fees:{type:String},
+    prescribed:{type:String},
     reason:{type: String},
     medCenter:{type:String},
+    doctor_name:{type:String},
     //medCenter:{type:mongoose.Schema.Types.ObjectId, ref: "Facility"},
     date: {type: String}
+
+   
     },
     {timestamps: true}
 );

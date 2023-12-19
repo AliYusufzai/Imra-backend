@@ -13,7 +13,7 @@ cloudinary.config({
   api_secret: "cqCvcU_hqshoESszVszEnB5-D_8"
 });
 
-// for super admin
+// for reception
 exports.createreception = async (req, res) => {
   const { name, email, phonenumber, password, address,avatar
     ,} = req.body;

@@ -4,7 +4,8 @@ require("./models/db");
 const useRouter = require("./routes/user");
 const privacyRouter = require("./routes/privacy_routes");
 const medicalhistory= require("./routes/medical_history_routes");
-const admin= require("./routes/admin_routes");
+//const admin= require("./routes/admin_routes");
+const superadmin = require("./routes/super_admin")
 const country= require("./routes/country_routes");
 const dishboard= require("./routes/dishboard_routes");
 const doctor=require("./routes/doctor_routes");
@@ -44,7 +45,8 @@ app.use(hospitalDishboard)
 app.use(privacyRouter);
 app.use(medicalhistory);
 app.use(doctor);
-app.use(admin);
+//app.use(admin);
+app.use(superadmin);
 app.use(country);
 app.use(document);
 app.use(envallergy);

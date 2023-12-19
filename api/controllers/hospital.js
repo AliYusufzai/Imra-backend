@@ -1,6 +1,6 @@
-const Hospital = require('../models/hospital');
-
-
+const Hospital = require('../models/newhospital_model');
+const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 const JWT_SECRET = "VERYsecret123";
 
 const cloudinary = require("cloudinary").v2;
@@ -10,28 +10,119 @@ cloudinary.config({
   api_key: "345126432123499",
   api_secret: "cqCvcU_hqshoESszVszEnB5-D_8"
 });
-exports.createHospital = async (req, res) => {
-    const { fullname, email, phonenumber,address,branch} = req.body;
-  
-    if (!req.file) {
-      return res.status(400).json({ error: "No image file provided" });
+
+
+exports.createHosp = async (req, res) => {
+  const { fullname, email, phonenumber, password,branch, address,avatar,add_doctor,manage_doctor,add_recption,manage_recption
+    ,} = req.body;
+
+  if (!req.file) {
+    return res.status(400).json({ error: "No image file provided" });
+  }
+  const result = await cloudinary.uploader.upload(req.file.path);
+  const existingHosp = await Hospital.findOne({ email });
+
+if (existingHosp) {
+  return res.status(400).json({
+    success: false,
+    message: "Email already exists. Please use a different email."
+  });
+}
+
+const hosp = await Hospital({
+  fullname,
+  email,
+  phonenumber,
+  password,
+ address,
+ branch,
+ add_doctor,
+ manage_doctor,
+ add_recption,
+ manage_recption,
+avatar: result.secure_url
+});
+
+await hosp.save();
+res.json({
+  success: true,
+  hosp
+});
+}
+
+
+
+/// login hosptial 
+
+exports.loginhosptial = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const existinghosp = await Hospital.findOne({ email });
+
+    if (!existinghosp) {
+      return res.status(404).json({
+        success: false,
+        message: 'Hospital not found. Please check your email.',
+      });
     }
-    const result = await cloudinary.uploader.upload(req.file.path);
-  
-    const hospital = await Hospital({
-        fullname,
-        email,
-        phonenumber,
-        address, 
-        branch,
-      avatar: result.secure_url
-    });
-    await hospital.save();
+
+    const isPasswordValid = await existinghosp.comparepassword(password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid password. Please try again.',
+      });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { _id: existinghosp._id, email: existinghosp.email },
+      JWT_SECRET, // Your secret key
+      { expiresIn: '1h' } // Token expiration time
+    );
+
+    // Log in successful
     res.json({
       success: true,
-      hospital
+      message: 'Login successful',
+      token,
+      Hospital: {
+        _id: existinghosp._id, 
+        name: existinghosp.name,
+        email: existinghosp.email,
+        // Add other fields as needed
+      },
     });
-  };
+  } catch (error) {
+    console.error('Error logging in hosptial:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// exports.createHospital = async (req, res) => {
+//     const { fullname, email, phonenumber,address,branch} = req.body;
+  
+//     if (!req.file) {
+//       return res.status(400).json({ error: "No image file provided" });
+//     }
+//     const result = await cloudinary.uploader.upload(req.file.path);
+  
+//     const hospital = await Hospital({
+//         fullname,
+//         email,
+//         phonenumber,
+//         address, 
+//         branch,
+//       avatar: result.secure_url
+//     });
+//     await hospital.save();
+//     res.json({
+//       success: true,
+//       hospital
+//     });
+//   };
 // Get All Hospitals
 exports.getAllHospitals = async (req, res) => {
   try {
@@ -48,7 +139,7 @@ exports.getSingleHospital = async (req, res) => {
   try {
     const { hospitalId } = req.params;
 
-    const hospital = await Hospital.findById(hospitalId);
+    const hospital = await Hospital.findById(hospitalId,"-password -tokens");
 
     if (!hospital) {
       return res.status(404).json({ error: "Hospital not found" });

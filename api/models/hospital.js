@@ -26,6 +26,19 @@ const hospitalSchema = new mongoose.Schema({
     avatar: {
       type:String
      },
+     add_recption:{
+    
+     },
+     add_doctor:{
+      type: Number, // Representing as a number
+      default: 0,   // Default value (0 for false)
+      enum: [0, 1],
+    },
+    manage_doctor:{
+      type: Number, // Representing as a number
+      default: 0,   // Default value (0 for false)
+      enum: [0, 1],
+    },
     
 });
 
