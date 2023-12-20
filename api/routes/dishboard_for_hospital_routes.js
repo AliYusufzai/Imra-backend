@@ -2,19 +2,19 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const Reception = require("../models/reception_model");
-//const Hospital = require("../models/hospital");
+const Doctor = require("../models/doctor");
 
 router.get('/hospital-dishboard', async (req, res) => {
     try {
       const userCount = await User.countDocuments();
-      //const hospitalCount = await Hospital.countDocuments();
+      const DoctorCount = await Doctor.countDocuments();
       const recpCount = await Reception.countDocuments();
   
       res.json({
         success: true,
         data: {
           userCount,
-          //hospitalCount,
+          DoctorCount,
           recpCount
         }
       });
