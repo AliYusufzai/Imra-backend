@@ -51,7 +51,6 @@ res.json({
 }
 
 
-
 /// login hosptial 
 
 exports.loginhosptial = async (req, res) => {

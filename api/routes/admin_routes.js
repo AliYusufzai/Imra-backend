@@ -24,6 +24,7 @@ const {
     //userVlidation,
     createAdmin
   );
+  router.patch("/toggle-active-status/:adminId", toggleActiveStatus);
   router.patch(
     "/admin-update/:adminId",
     upload.single("avatar"),
