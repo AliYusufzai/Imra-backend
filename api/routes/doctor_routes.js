@@ -26,4 +26,20 @@ router.patch(
    
 );
 
+router.get('/hospital-all-doc/:hospitalId', async (req, res) => {
+    try {
+      const { hospitalId } = req.params;
+      const doctors = await Doctor.find({ hospitalId });
+  
+      res.json({
+        success: true,
+        doctors,
+        hospitalId, // Include hospitalId in the response
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
 module.exports = router;

@@ -2,7 +2,7 @@ const Doctor = require('../models/doctor');
 
 
 const JWT_SECRET = "VERYsecret123";
-
+const Hospital = require("../models/hospital");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
@@ -11,13 +11,13 @@ cloudinary.config({
   api_secret: "cqCvcU_hqshoESszVszEnB5-D_8"
 });
 exports.createDoctor = async (req, res) => {
-    const { name, email, phonenumber,pdmaid,experience,qualification} = req.body;
+    const { name, email, phonenumber,pdmaid,experience,qualification,hospitalId} = req.body;
   
     if (!req.file) {
       return res.status(400).json({ error: "No image file provided" });
     }
     const result = await cloudinary.uploader.upload(req.file.path);
-  
+    const hosp = await Hospital.findById(hospitalId);
     const doctor = await Doctor({
         name,
         email,
@@ -25,7 +25,8 @@ exports.createDoctor = async (req, res) => {
         pdmaid, 
         experience,
         qualification,
-      Image: result.secure_url
+      Image: result.secure_url,
+      hospitalId:hosp._id
     });
     await doctor.save();
     res.json({
@@ -33,7 +34,7 @@ exports.createDoctor = async (req, res) => {
       doctor
     });
   };
-
+ 
 
   // Get Single Doctor by ID
 exports.getDoctorById = async (req, res) => {

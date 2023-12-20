@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Reception = require("../models/reception_model");
+const Hospital = require("../models/hospital");
 const bcrypt = require('bcrypt');
 // const {cloudinary} = require('../middlewares/clouddary')
 
@@ -15,8 +16,8 @@ cloudinary.config({
 
 // for reception
 exports.createreception = async (req, res) => {
-  const { name, email, phonenumber, password, address,avatar
-    ,} = req.body;
+  const { name, email, phonenumber, password, address,avatar,hospitalId
+    } = req.body;
 
   if (!req.file) {
     return res.status(400).json({ error: "No image file provided" });
@@ -30,14 +31,14 @@ if (existingRecp) {
     message: "Email already exists. Please use a different email."
   });
 }
-
+const hosp = await Hospital.findById(hospitalId);
 const recption = await Reception({
+ hospitalId:hosp._id,
   name,
   email,
   phonenumber,
   password,
  address,
- 
   avatar: result.secure_url
 });
 
