@@ -30,7 +30,6 @@ router.get('/hospital-all-doc/:hospitalId', async (req, res) => {
     try {
       const { hospitalId } = req.params;
       const doctors = await Doctor.find({ hospitalId });
-  
       res.json({
         success: true,
         doctors,
