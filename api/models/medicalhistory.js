@@ -12,6 +12,10 @@ const MedicalHistorySchema = new mongoose.Schema({
     reason:{type: String},
     medCenter:{type:String},
     doctor_name:{type:String},
+    searchCount: {
+        type: Number,
+        default: 0,
+      },
     //medCenter:{type:mongoose.Schema.Types.ObjectId, ref: "Facility"},
     date: {type: String}
 
