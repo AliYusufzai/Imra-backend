@@ -139,26 +139,30 @@ exports.getSingleAdmin = async (req, res) => {
   }
 };
 
-// Controller method to toggle admin's is_active status
 exports.toggleActiveStatus = async (req, res) => {
   const { adminId } = req.params;
-  try {
-    const inactive_admin = await SuperAdmin.findById(adminId);
-    console.log(inactive_admin);
-    if (!inactive_admin) {
-      return res.status(404).json({ message: "there is no admin found" });
-    }
-    inactive_admin.is_active = !inactive_admin.is_active;
-    await inactive_admin.save();
-    res.status(200).json(inactive_admin);
-  } catch (error) {
-    res.status(500).json({
-      message: "An error occured ",
-      error: error.message
-    });
-  }
-};
 
+try {
+  const inactiveAdmin = await SuperAdmin.findById(adminId,);
+
+  if (!inactiveAdmin) {
+    return res.status(404).json({ message: "Admin not found" });
+  }
+
+  inactiveAdmin.is_active = !inactiveAdmin.is_active;
+
+   inactiveAdmin.save();
+
+  res.status(200).json(inactiveAdmin);
+} catch (error) {
+  console.error("Error in toggleActiveStatus:", error);
+  res.status(500).json({
+    message: "An error occurred",
+    error: error.message
+  });
+}
+  
+};
 
 exports.updateAdmin = async (req, res) => {
   try {
