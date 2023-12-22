@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const MedicalHistorySchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    reception:{type:mongoose.Schema.Types.ObjectId, ref: "Reception"},
     procedure: {type: String},
     patientNo:{type:String},
     patientName:{type:String},

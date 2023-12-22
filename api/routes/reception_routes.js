@@ -96,6 +96,37 @@ router.get('/search', async (req, res) => {
     res.status(500).json({ success: false, message: 'An error occurred.' });
   }
 });
+
+
+
+router.get("/medical-history/searchCount/:receptionId", async (req, res) => {
+  const { receptionId } = req.params;
+
+  try {
+    // Find the MedicalHistory by receptionId
+    const medicalHistory = await MedicalHistory.findOne({ receptionId });
+
+    // Log the retrieved medicalHistory
+    console.log("Medical History:", medicalHistory);
+
+    // Check if MedicalHistory exists
+    if (!medicalHistory) {
+      return res.status(404).json({ error: "MedicalHistory not found" });
+    }
+
+    // Extract the searchCount value
+    const searchCount = medicalHistory.searchCount;
+
+    // Log the searchCount value
+    console.log("Search Count:", searchCount);
+
+    // Send the searchCount value in the response
+    res.json({ searchCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 // router.get('/reception-dishboard', async (req, res) => {
 //   try {
 //     const userCount = await User.countDocuments();
