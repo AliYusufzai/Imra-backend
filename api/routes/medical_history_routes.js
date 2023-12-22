@@ -205,9 +205,14 @@ router.get("/search-count/:userId", async (req, res) => {
 router.get("/search-reception/:receptionId", async (req, res) => {
     try {
         const receptionId = req.params.receptionId;
-        const medicalHistoryRecord = await MedicalHistory.countDocuments({
-            reception: receptionId,
-        });
+        // const medicalHistoryRecord = await MedicalHistory.countDocuments({
+        //     reception: receptionId,
+        // });
+
+        const medicalHistoryRecord = await MedicalHistory.find(
+            { reception: receptionId },
+            { patientName: 1, searchCount: 1, _id: 0 }
+        );
 
         //const medicalHistoryRecord = await MedicalHistory.findOne({ user: userId, reception: receptionId });
 
