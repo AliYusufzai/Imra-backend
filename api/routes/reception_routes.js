@@ -68,6 +68,34 @@ router.get('/reception-dashboard', async (req, res) => {
   }
 });
 
+
+// get only user data 
+router.get('/search', async (req, res) => {
+  try {
+    // Calculate the total search count from the MedicalHistory model
+    const totalSearchCount = await MedicalHistory.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalSearchCount: { $sum: "$searchCount" }
+        }
+      }
+    ]);
+
+    // Extract the total search count value
+    const searchCount = totalSearchCount.length > 0 ? totalSearchCount[0].totalSearchCount : 0;
+
+    res.json({
+      success: true,
+      data: {
+        searchCount,
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching search count:', error);
+    res.status(500).json({ success: false, message: 'An error occurred.' });
+  }
+});
 // router.get('/reception-dishboard', async (req, res) => {
 //   try {
 //     const userCount = await User.countDocuments();
