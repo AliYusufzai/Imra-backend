@@ -49,7 +49,7 @@ router.get("/all-medical-history/:userId", async (req, res) => {
     if (medicalHistoryRecords.length === 0) {
       return res.status(404).json({ error: "No medical history records found for the user" });
     }
-
+    medicalHistoryRecord.searchCount += 1;
     // Return the medical history records data as a JSON response
     res.status(200).json({ success: 1, data: medicalHistoryRecords });
   } catch (error) {
@@ -193,4 +193,26 @@ router.get("/search-reception/:userId/:receptionId", async (req, res) => {
   }
 });
 
+
+ //to pass only reception id get user seartch count
+ router.get("/search-user/:receptionId", async (req, res) => {
+  try {
+    // Extract the reception ID from the request parameters
+    const receptionId = req.params.receptionId;
+
+    // Fetch the medical history record by reception ID
+    const medicalHistoryRecord = await MedicalHistory.find({ reception: receptionId });
+
+    // Check if the record exists
+    if (!medicalHistoryRecord) {
+      return res.status(404).json({ error: "Medical history record not found" });
+    }
+
+    // Return only the "searchCount" value as a JSON response
+    res.status(200).json({ success: true, searchCount: medicalHistoryRecord.searchCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
   module.exports = router;
