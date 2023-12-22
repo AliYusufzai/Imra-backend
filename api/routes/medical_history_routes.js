@@ -234,6 +234,34 @@ router.get("/search-reception/:receptionId", async (req, res) => {
     }
 });
 
+router.get("/count-reception/:receptionId", async (req, res) => {
+  try {
+      const receptionId = req.params.receptionId;
+      const medicalHistoryRecord = await MedicalHistory.countDocuments({
+          reception: receptionId,
+      });
+
+
+      //const medicalHistoryRecord = await MedicalHistory.findOne({ user: userId, reception: receptionId });
+
+      // Check if the record exists
+      if (!medicalHistoryRecord) {
+          return res
+              .status(404)
+              .json({ error: "Medical history record not found" });
+      }
+
+      // Return only the "searchCount" value as a JSON response
+      res.status(200).json({
+          success: 1,
+          data: medicalHistoryRecord,
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 //to pass only reception id get user seartch count
 router.get("/search-user/:receptionId", async (req, res) => {
     try {
