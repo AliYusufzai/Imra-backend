@@ -57,7 +57,7 @@ router.get("/all-medical-history/:userId", async (req, res) => {
                 error: "No medical history records found for the user",
             });
         }
-        medicalHistoryRecord.searchCount += 1;
+       // medicalHistoryRecord.searchCount += 1;
         // Return the medical history records data as a JSON response
         res.status(200).json({ success: 1, data: medicalHistoryRecords });
     } catch (error) {
