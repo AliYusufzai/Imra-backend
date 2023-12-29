@@ -88,30 +88,85 @@ exports.getUserDocuments = async (req, res) => {
 };
 
 // Delete Document by ID
+// exports.deleteDocument = async (req, res) => {
+//   try {
+//     const { docId } = req.params;
+
+//     const document = await Document.findById(docId);
+
+//     if (!document) {
+//       return res.status(404).json({ error: "Document not found" });
+//     }
+
+//     // Optionally, you may want to check permissions here (e.g., if the user owns the document)
+
+//     // Delete the document
+//     await document.remove();
+
+//     res.status(200).json({ message: "Document deleted successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
 exports.deleteDocument = async (req, res) => {
   try {
-    const { docId } = req.params;
+    const { userId } = req.params;
 
-    const document = await Document.findById(docId);
+    const user = await User.findById(userId);
 
-    if (!document) {
-      return res.status(404).json({ error: "Document not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    // Optionally, you may want to check permissions here (e.g., if the user owns the document)
+    // Delete all documents associated with the user
+    await Document.deleteMany({ user: user._id });
 
-    // Delete the document
-    await document.remove();
-
-    res.status(200).json({ message: "Document deleted successfully" });
+    res.status(200).json({ message: "User documents deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 //search documents
 
 exports.searchQcument= async(req,res)=>{
   
 }
+exports.updateDocument = async (req, res) => {
+  try {
+    const { userId, docId, doc_name, description } = req.body;
+
+    // Assuming you have a 'userId' field in the request body to specify the user ID
+    if (!userId) {
+      return res.status(400).json({ error: "User ID not provided" });
+    }
+
+    // Check if the user with the provided ID exists
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the document with the provided ID exists
+    const doc = await Document.find();
+
+
+    // Update document fields
+    doc.doc_name = doc_name || doc.doc_name;
+    doc.description = description || doc.description;
+
+    // Save the updated document
+    await doc.save();
+
+    // Return both the user ID and the updated document record in the response
+    res.status(200).json({
+      userId: user._id,
+      document: doc.toJSON(),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

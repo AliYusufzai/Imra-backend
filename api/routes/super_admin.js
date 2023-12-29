@@ -27,6 +27,7 @@ const {
     );
     router.get('/dishboard', async (req, res) => {
       try {
+        const admincount=await SuperAdmin.countDocuments();
         const userCount = await User.countDocuments();
         const DoctorCount = await Doctor.countDocuments();
         const recpCount = await Reception.countDocuments();
@@ -40,6 +41,7 @@ const {
             DoctorCount,
             recpCount,
             hospCount,
+            admincount,
           }
         });
       } catch (error) {

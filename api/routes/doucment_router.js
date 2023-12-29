@@ -4,17 +4,15 @@ const Document = require("../models/documents");
 const multer = require("multer");
 const storage = multer.diskStorage({});
 const upload = multer({ storage });
-const { createDocument ,getUserDocuments,getAllDocuments,deleteDocument} = require("../controllers/document_controller");
+const { createDocument ,getUserDocuments,getAllDocuments,deleteDocument,updateDocument} = require("../controllers/document_controller");
 
-
+router.patch('/update-doc',updateDocument)
 router.post("/create-document", upload.single("document"), createDocument);
 //get all document api
 router.get("/all-doc",getAllDocuments),
   //get  single user all doc
 router.get("/user_all_doc/:userId",getUserDocuments)
 router.delete("/delete-all/:docId", deleteDocument) 
-
-
 
 router.get('/search/document', async (req, res) => {
   try {
